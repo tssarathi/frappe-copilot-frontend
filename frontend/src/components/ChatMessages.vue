@@ -12,7 +12,7 @@ const props = defineProps<{
 const container = ref<HTMLElement>();
 
 watch(
-  () => props.messages.length,
+  () => props.messages,
   () => {
     nextTick(() => {
       if (container.value) {
@@ -20,6 +20,7 @@ watch(
       }
     });
   },
+  { deep: true },
 );
 </script>
 

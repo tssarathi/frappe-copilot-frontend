@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "echarts": "^5.6.0",
-    "frappe-ui": "^0.1.261",
     "markdown-it": "^14.1.0",
     "vue": "^3.4",
     "vue-echarts": "^7.0.3"

@@ -21,7 +21,8 @@ export function useAuth() {
       });
       if (result?.message?.token) {
         token.value = result.message.token;
-        const payload = JSON.parse(atob(result.message.token.split(".")[1]));
+        const b64 = result.message.token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        const payload = JSON.parse(atob(b64));
         tokenExpiry.value = payload.exp || 0;
         return token.value;
       }

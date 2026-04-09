@@ -55,6 +55,7 @@ async function bootstrap(): Promise<void> {
   registerShortcut(state.keyboardShortcut);
 
   document.addEventListener("copilot-opened", () => {
+    document.documentElement.style.setProperty("--copilot-sidebar-width", state.sidebarWidth + "px");
     document.querySelector(".main-section")?.classList.add("copilot-push");
   });
   document.addEventListener("copilot-closed", () => {

@@ -11,6 +11,12 @@ import type {
   ConnectionState,
 } from "@/types";
 
+const VALID_BLOCK_TYPES = new Set(["text", "chart", "table", "kpi", "status_list"]);
+
+function isValidBlock(block: Record<string, unknown>): boolean {
+  return typeof block.type === "string" && VALID_BLOCK_TYPES.has(block.type);
+}
+
 export function useChat() {
   const messages = ref<Message[]>([]);
   const isStreaming = ref(false);
@@ -42,7 +48,9 @@ export function useChat() {
         if (!currentAssistantMsg!.blocks) {
           currentAssistantMsg!.blocks = [];
         }
-        currentAssistantMsg!.blocks.push(event.block as ContentBlock);
+        if (isValidBlock(event.block)) {
+          currentAssistantMsg!.blocks.push(event.block as ContentBlock);
+        }
         _triggerReactivity();
         break;
 

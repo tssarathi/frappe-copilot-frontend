@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import ChatSidebar from "./components/ChatSidebar.vue";
 
 const props = defineProps<{
@@ -22,7 +22,13 @@ function handleClose() {
   document.dispatchEvent(new CustomEvent("copilot-closed"));
 }
 
-document.addEventListener("copilot-toggle", toggle);
+onMounted(() => {
+  document.addEventListener("copilot-toggle", toggle);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("copilot-toggle", toggle);
+});
 </script>
 
 <template>

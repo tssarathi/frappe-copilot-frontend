@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, onErrorCaptured } from "vue";
 import { getBlockComponent } from "./blocks";
 import type { Message } from "@/types/messages";
 
 const props = defineProps<{ message: Message }>();
+
+const renderError = ref(false);
+
+onErrorCaptured((err) => {
+  console.error("[Copilot] Block render error:", err);
+  renderError.value = true;
+  return false;
+});
 
 const CRITICAL_CODES = ["AUTH_FAILURE", "ERPNEXT_DOWN"];
 const WARNING_CODES = ["MCP_UNREACHABLE"];
@@ -30,7 +38,10 @@ const timeStr = computed(() =>
 
     <!-- Assistant message -->
     <div v-else-if="message.role === 'assistant'" class="copilot-bubble-content">
-      <template v-if="message.blocks && message.blocks.length > 0">
+      <div v-if="renderError" class="copilot-error copilot-error--info">
+        <div class="copilot-error-message">Could not render response</div>
+      </div>
+      <template v-else-if="message.blocks && message.blocks.length > 0">
         <component
           v-for="(block, i) in message.blocks"
           :key="i"
