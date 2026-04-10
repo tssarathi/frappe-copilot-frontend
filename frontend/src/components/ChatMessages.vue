@@ -4,6 +4,15 @@ import MessageBubble from "./MessageBubble.vue";
 import ToolCallCard from "./ToolCallCard.vue";
 import type { Message } from "@/types/messages";
 
+declare const frappe: any;
+
+function frappeIcon(name: string, size: string): string {
+  if (typeof frappe !== "undefined" && frappe.utils?.icon) {
+    return frappe.utils.icon(name, size);
+  }
+  return `<svg class="icon icon-${size}"><use href="#icon-${name}"></use></svg>`;
+}
+
 const props = defineProps<{
   messages: readonly Message[];
   isStreaming: boolean;
@@ -26,9 +35,15 @@ watch(
 
 <template>
   <div ref="container" class="copilot-messages">
-    <div v-if="messages.length === 0" class="copilot-empty">
-      <div class="copilot-empty-icon">&#10024;</div>
-      <div class="copilot-empty-text">Ask me anything about your ERPNext data</div>
+    <div v-if="messages.length === 0" class="copilot-empty-state">
+      <div class="copilot-empty-icon">
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span v-html="frappeIcon('bot-message-square', 'md')" />
+      </div>
+      <p class="copilot-empty-title">How can I help?</p>
+      <p class="copilot-empty-subtitle">
+        Ask me anything about your ERPNext data, or let me help you with tasks.
+      </p>
     </div>
 
     <template v-for="msg in messages" :key="msg.id">

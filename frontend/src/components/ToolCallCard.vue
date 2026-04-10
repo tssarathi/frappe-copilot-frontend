@@ -1,33 +1,68 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import type { ToolCall } from "@/types/messages";
-
-const props = defineProps<{ toolCall: ToolCall }>();
-const expanded = ref(false);
-
-function formatTime(): string {
-  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
-</script>
-
 <template>
   <div class="copilot-tool-card">
     <div class="copilot-tool-header">
-      <span :class="`copilot-tool-status copilot-tool-status--${toolCall.status}`"></span>
+      <span class="copilot-tool-status" :class="`copilot-tool-status--${toolCall.status || 'running'}`" />
       <span class="copilot-tool-name">{{ toolCall.name }}</span>
-      <span class="copilot-tool-time">{{ formatTime() }}</span>
+      <span class="copilot-tool-time">{{ formattedTime }}</span>
     </div>
-    <div v-if="Object.keys(toolCall.arguments).length > 0" class="copilot-tool-args">
-      <pre>{{ JSON.stringify(toolCall.arguments, null, 2) }}</pre>
+    <div class="copilot-tool-section">
+      <p class="copilot-tool-label">Arguments</p>
+      <pre class="copilot-tool-pre">{{ formattedArgs }}</pre>
     </div>
-    <div v-if="toolCall.result" class="copilot-tool-result">
-      <button class="copilot-tool-toggle" @click="expanded = !expanded">
-        <span :class="{ 'copilot-chevron-open': expanded }">&#9656;</span>
+    <div v-if="toolCall.result !== null && toolCall.result !== undefined">
+      <button
+        :class="['copilot-tool-expand-btn', expanded ? 'copilot-tool-expand-btn--open' : '']"
+        @click="expanded = !expanded"
+      >
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span v-html="frappeIcon('chevron-right', 'xs')" />
         Result
       </button>
-      <div v-if="expanded" class="copilot-tool-result-body">
-        <pre>{{ toolCall.result }}</pre>
+      <div v-if="expanded">
+        <pre class="copilot-tool-result-pre">{{ formattedResult }}</pre>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import type { ToolCall } from "@/types/messages";
+
+declare const frappe: any;
+
+const props = defineProps<{ toolCall: ToolCall }>();
+const expanded = ref(false);
+
+function frappeIcon(name: string, size: string): string {
+  if (typeof frappe !== "undefined" && frappe.utils?.icon) {
+    return frappe.utils.icon(name, size);
+  }
+  return `<svg class="icon icon-${size}"><use href="#icon-${name}"></use></svg>`;
+}
+
+const formattedArgs = computed(() => {
+  if (!props.toolCall.arguments) return "{}";
+  if (typeof props.toolCall.arguments === "string") return props.toolCall.arguments;
+  try {
+    return JSON.stringify(props.toolCall.arguments, null, 2);
+  } catch {
+    return String(props.toolCall.arguments);
+  }
+});
+
+const formattedResult = computed(() => {
+  const r = props.toolCall.result;
+  if (r === null || r === undefined) return "";
+  if (typeof r === "string") return r;
+  try {
+    return JSON.stringify(r, null, 2);
+  } catch {
+    return String(r);
+  }
+});
+
+const formattedTime = computed(() =>
+  new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+);
+</script>
