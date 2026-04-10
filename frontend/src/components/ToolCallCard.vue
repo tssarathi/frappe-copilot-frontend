@@ -1,25 +1,32 @@
 <template>
   <div class="copilot-tool-card">
-    <div class="copilot-tool-header">
+    <button
+      :class="['copilot-tool-header', expanded ? 'copilot-tool-header--open' : '']"
+      @click="expanded = !expanded"
+    >
       <span class="copilot-tool-status" :class="`copilot-tool-status--${toolCall.status || 'running'}`" />
       <span class="copilot-tool-name">{{ toolCall.name }}</span>
       <span class="copilot-tool-time">{{ formattedTime }}</span>
-    </div>
-    <div class="copilot-tool-section">
-      <p class="copilot-tool-label">Arguments</p>
-      <pre class="copilot-tool-pre">{{ formattedArgs }}</pre>
-    </div>
-    <div v-if="toolCall.result !== null && toolCall.result !== undefined">
-      <button
-        :class="['copilot-tool-expand-btn', expanded ? 'copilot-tool-expand-btn--open' : '']"
-        @click="expanded = !expanded"
-      >
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <span v-html="frappeIcon('chevron-right', 'xs')" />
-        Result
-      </button>
-      <div v-if="expanded">
-        <pre class="copilot-tool-result-pre">{{ formattedResult }}</pre>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <span class="copilot-tool-chevron" v-html="frappeIcon('chevron-right', 'xs')" />
+    </button>
+    <div v-if="expanded">
+      <div class="copilot-tool-section">
+        <p class="copilot-tool-label">Arguments</p>
+        <pre class="copilot-tool-pre">{{ formattedArgs }}</pre>
+      </div>
+      <div v-if="toolCall.result !== null && toolCall.result !== undefined">
+        <button
+          :class="['copilot-tool-expand-btn', resultExpanded ? 'copilot-tool-expand-btn--open' : '']"
+          @click.stop="resultExpanded = !resultExpanded"
+        >
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <span v-html="frappeIcon('chevron-right', 'xs')" />
+          Result
+        </button>
+        <div v-if="resultExpanded">
+          <pre class="copilot-tool-result-pre">{{ formattedResult }}</pre>
+        </div>
       </div>
     </div>
   </div>
@@ -33,6 +40,7 @@ declare const frappe: any;
 
 const props = defineProps<{ toolCall: ToolCall }>();
 const expanded = ref(false);
+const resultExpanded = ref(false);
 
 function frappeIcon(name: string, size: string): string {
   if (typeof frappe !== "undefined" && frappe.utils?.icon) {
