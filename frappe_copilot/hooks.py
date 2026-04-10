@@ -7,7 +7,7 @@ app_license = "MIT"
 app_version = "0.1.0"
 app_color = "#4F46E5"
 
-app_include_js = ["/assets/frappe_copilot/frontend/dist/js/frappe_copilot.js?v=de6c2961"]
+app_include_js = ["/assets/frappe_copilot/frontend/dist/js/frappe_copilot.js?v=55d7c6e4"]
 app_include_css = ["/assets/frappe_copilot/css/copilot.css?v=456ae09a"]
 
 after_install = "frappe_copilot.install.after_install"

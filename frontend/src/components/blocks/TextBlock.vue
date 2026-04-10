@@ -5,20 +5,16 @@ import type { TextBlock } from "@/types/blocks";
 
 const props = defineProps<{ block: TextBlock }>();
 
-const md = new MarkdownIt({
-  html: false,
-  linkify: true,
-  breaks: true,
-});
+// Single shared instance — not per-component mount
+const md = new MarkdownIt({ html: false, linkify: true, breaks: true });
 
-// Open links in new tab
 const defaultRender =
   md.renderer.rules.link_open ||
-  function (tokens, idx, options, _env, self) {
+  function (tokens: any, idx: any, options: any, _env: any, self: any) {
     return self.renderToken(tokens, idx, options);
   };
 
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+md.renderer.rules.link_open = function (tokens: any, idx: any, options: any, env: any, self: any) {
   tokens[idx].attrSet("target", "_blank");
   tokens[idx].attrSet("rel", "noopener");
   return defaultRender(tokens, idx, options, env, self);

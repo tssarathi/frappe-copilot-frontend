@@ -24,7 +24,11 @@ export function formatValue(
       }).format(Number(value));
     }
     case "percent":
-      return `${value}%`;
+      return new Intl.NumberFormat("en", {
+        style: "percent",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }).format(Number(value) / 100);
     case "number":
       return new Intl.NumberFormat("en-IN").format(Number(value));
     case "date":

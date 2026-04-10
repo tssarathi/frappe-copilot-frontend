@@ -12,13 +12,15 @@ const sortAsc = ref(true);
 
 const sortedRows = computed(() => {
   if (!sortKey.value) return props.block.rows;
-  const col = props.block.columns.find((c) => c.key === sortKey.value);
-  if (!col) return props.block.rows;
+  const key = sortKey.value;
+  const dir = sortAsc.value ? 1 : -1;
   return [...props.block.rows].sort((a, b) => {
-    const va = a.values[col.key];
-    const vb = b.values[col.key];
-    const cmp = va < vb ? -1 : va > vb ? 1 : 0;
-    return sortAsc.value ? cmp : -cmp;
+    const va = a.values[key];
+    const vb = b.values[key];
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    if (typeof va === "number" && typeof vb === "number") return (va - vb) * dir;
+    return String(va).localeCompare(String(vb)) * dir;
   });
 });
 
