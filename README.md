@@ -18,12 +18,12 @@ bench restart
 3. Enable the sidebar
 4. Click **Test Connection** to verify
 
-### Environment Variable
+### JWT Secret
 
-Set `COPILOT_JWT_SECRET` in your Frappe site's environment to match the Agent service:
+Set `copilot_jwt_secret` in your Frappe site config to match the `COPILOT_JWT_SECRET` in the agent's `.env`:
 
 ```bash
-export COPILOT_JWT_SECRET=your-shared-secret
+bench --site <your-site> set-config copilot_jwt_secret your-shared-secret
 ```
 
 ## Development

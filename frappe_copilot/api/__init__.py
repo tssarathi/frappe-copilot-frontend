@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from datetime import UTC, datetime, timedelta
 
 import frappe
@@ -24,9 +23,12 @@ def get_settings() -> dict:
 @frappe.whitelist()
 def get_auth_token() -> dict:
     """Generate a JWT for the current user to authenticate with the Agent."""
-    secret = os.environ.get("COPILOT_JWT_SECRET", "")
+    secret = frappe.conf.get("copilot_jwt_secret", "")
     if not secret:
-        frappe.throw("COPILOT_JWT_SECRET environment variable is not set.")
+        frappe.throw(
+            "copilot_jwt_secret is not configured. "
+            "Run: bench --site <site> set-config copilot_jwt_secret <secret>"
+        )
 
     user = frappe.session.user
     now = datetime.now(UTC)
