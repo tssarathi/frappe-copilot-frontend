@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onErrorCaptured } from "vue";
 import { getBlockComponent } from "./blocks";
+import { renderMarkdown } from "@/utils/markdown";
 import type { Message } from "@/types/messages";
 
 const props = defineProps<{ message: Message }>();
@@ -49,9 +50,8 @@ const timeStr = computed(() =>
           :block="block"
         />
       </template>
-      <div v-else-if="message.content" class="copilot-text-content">
-        {{ message.content }}
-      </div>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div v-else-if="message.content" class="copilot-markdown" v-html="renderMarkdown(message.content)" />
     </div>
 
     <!-- Error message -->
