@@ -122,10 +122,12 @@ export function useChat() {
     messages.value = [...messages.value];
   }
 
-  async function connect(agentUrl: string): Promise<void> {
-    const token = await auth.fetchToken();
-    const wsUrl = agentUrl.replace(/\/$/, "") + "/ws/chat?token=" + token;
-    ws.connect(wsUrl);
+  function connect(agentUrl: string): void {
+    const base = agentUrl.replace(/\/$/, "");
+    ws.connect(async () => {
+      const token = await auth.fetchToken();
+      return base + "/ws/chat?token=" + token;
+    });
     sessionId = crypto.randomUUID();
   }
 
